@@ -1,0 +1,19 @@
+import QtQuick 2.0
+
+import HmiGuiFramework 1.0
+import Hmi.Ford.Views 1.0
+
+FullScreenView {
+    id: root
+    //touchinputreceiverthread.cpp is specifically checking for objectName to be "ProjectionView"
+    objectName: "ProjectionView"
+
+    height: 480 + 72 // FORDSYNC3-12529: (Per Rob M.) this is safe because 10L (which uses 720) is file-selected.
+    transparentWindow: true
+    transientsAllowed: true
+    blockedTransients: [
+        "BluetoothConnected",
+        "BluetoothAttemptingReconnect",
+        "BluetoothNotConnected"
+    ]
+}
