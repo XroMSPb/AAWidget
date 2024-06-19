@@ -25,33 +25,83 @@ FullScreenView {
     
     //property bool sourceAA: AL2HMIBridge.projectionSource.projectionMode == AL2HMIBridge.ProjectionSource.Projection_GAL
 
-     function readPosX() {
-	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "file:///fs/rwdata/customSettings/ProjectionWidget/posX",false);
-	xhr.send();
-	return xhr.responseText;
+	function setStatus() {
+		var xhr = new XMLHttpRequest();
+		var rvcStatus = "enabled";
+		xhr.open("PUT", "file:///fs/rwdata/customSettings/rvc/camera_control");
+		xhr.send(rvcStatus);
 	}
 
-     function readPosY() {
-	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "file:///fs/rwdata/customSettings/ProjectionWidget/posY",false);
-	xhr.send();
-	return xhr.responseText;
+    function readPosX(id) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "file:///fs/rwdata/customSettings/ProjectionWidget/"+id+"PosX",false);
+        xhr.send();
+        return xhr.responseText;
+	}
+
+    function readPosY(id) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "file:///fs/rwdata/customSettings/ProjectionWidget/"+id+"PosY",false);
+        xhr.send();
+        return xhr.responseText;
 	}
     
-    function storeNewPosition(posX, posY) {
+    function storeNewPosition(id, posX, posY) {
         var xhr = new XMLHttpRequest();
-        xhr.open("PUT", "file:///fs/rwdata/customSettings/ProjectionWidget/posX", false);
+        xhr.open("PUT", "file:///fs/rwdata/customSettings/ProjectionWidget/"+id+"PosX", false);
         xhr.send(posX);
         var xhr2 = new XMLHttpRequest();
-        xhr2.open("PUT", "file:///fs/rwdata/customSettings/ProjectionWidget/posY", false);
+        xhr2.open("PUT", "file:///fs/rwdata/customSettings/ProjectionWidget/"+id+"PosY", false);
         xhr2.send(posY);
     }
 
     Rectangle {
+		id: rearCameraWidget
+        x: readPosX(camera)
+        y: readPosY(camera)
+        width: 60
+        height: 60
+        color: "black"
+        opacity: 1
+        radius: 14
+        visible: true
+
+        MouseArea {
+           id: itemMouseArea
+           property bool beepOnClick: true
+           anchors.fill: parent
+           drag.target: parent
+           drag.axis: Drag.XAndYAxis
+
+           onPressed: {
+                rearCameraWidget.color = 'gray';
+           }
+           onClicked: {
+               setStatus();
+           }
+
+           onReleased: {
+                rearCameraWidget.color = "black";
+                if(rearCameraWidget.y < 0) rearCameraWidget.y = 0;
+                if(rearCameraWidget.y > 420) rearCameraWidget.y = 420;
+                if(rearCameraWidget.x < 0) rearCameraWidget.x = 0;
+                if(rearCameraWidget.x > 740) rearCameraWidget.x = 740;
+                storeNewPosition(camera, rearCameraWidget.x,rearCameraWidget.y)
+           }
+        }
+	}
+
+    HmiImage {
+			id: rvcIcon
+            anchors.centerIn: rearCameraWidget
+            visible: true		
+			source: touchArea.pressed ? UiTheme.palette.icon("40x40/DAT/icon_rear_camera_view_selected") : UiTheme.palette.icon("40x40/DAT/icon_rear_camera_view_selectedpressed")
+		}
+
+    Rectangle {
         id: outsideTemperatureLabelBG
-        x: readPosX()
-        y: readPosY()
+        x: readPosX(temp)
+        y: readPosY(temp)
         width: 60
         height: 60
         color: "black"
@@ -79,7 +129,7 @@ FullScreenView {
                 if(outsideTemperatureLabelBG.y > 420) outsideTemperatureLabelBG.y = 420;
                 if(outsideTemperatureLabelBG.x < 0) outsideTemperatureLabelBG.x = 0;
                 if(outsideTemperatureLabelBG.x > 740) outsideTemperatureLabelBG.x = 740;
-                storeNewPosition(outsideTemperatureLabelBG.x,outsideTemperatureLabelBG.y)
+                storeNewPosition(temp, outsideTemperatureLabelBG.x,outsideTemperatureLabelBG.y)
            }
         }
     }
