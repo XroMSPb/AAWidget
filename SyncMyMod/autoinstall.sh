@@ -157,8 +157,10 @@ fi
 # Creating new folders
 mkdir -p /fs/rwdata/customSettings/ProjectionWidget
 
-cp ${OTHER_DIR}/posX	/fs/rwdata/customSettings/ProjectionWidget
-cp ${OTHER_DIR}/posY	/fs/rwdata/customSettings/ProjectionWidget
+cp ${OTHER_DIR}/cameraPosX	/fs/rwdata/customSettings/ProjectionWidget
+cp ${OTHER_DIR}/cameraPosY	/fs/rwdata/customSettings/ProjectionWidget
+cp ${OTHER_DIR}/tempPosX	/fs/rwdata/customSettings/ProjectionWidget
+cp ${OTHER_DIR}/tempPosY	/fs/rwdata/customSettings/ProjectionWidget
 
 echo ${MODNAME} >> /fs/mp/etc/installed_mods.txt
 
