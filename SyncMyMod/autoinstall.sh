@@ -45,6 +45,9 @@ MODTOOLS="MODS_TOOLS"
 # This Mod Name
 MODNAME="AACP_WIDGET_MOD_1_1"
 
+# Dependencies MODS_SETTINGS
+DEPENDENCY="RVC_ON_DEMAND"
+
 
 #####################################################################################################################################################################
 #   Functions                                                                                                                                           
@@ -117,6 +120,20 @@ if [ $? -eq 0 ]; then
 
 	exit 0
 fi
+
+#####################################################################################################################################################################
+#   Check if DEPENDENCY is installed                                                                                                              	
+#####################################################################################################################################################################
+
+grep -q ${DEPENDENCY} /fs/mp/etc/installed_mods.txt
+if [ $? -ne 0 ]; then
+	displayMessage "RVC_ON_DEMAND mod not found. Installation aborted."
+	displayMessage "This version of AA/CP Widget Mod REQUIRES the RVC_ON_DEMAND mod to be installed. Please install it before retrying."
+	displayMessage ""
+	
+	exit 0
+fi
+
 
 #####################################################################################################################################################################
 #   Check if patch can be applied safely                                                                                                                
